@@ -1,31 +1,40 @@
 package com.company;
 
 import com.company.entity.BinaryTreeNode;
+import com.company.exceptions.TreeAppException;
 
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
+        try {
+            TreeService service = new TreeService();
+            System.out.print("Input size a tree. Size:");
+            Scanner scanner = new Scanner(System.in);
+            int size = scanner.nextInt();
+            if (size == 0) {
+                System.out.println("Input size is 0");
+                return;
+            }
 
-        TreeService service = new TreeService();
-        System.out.print("Input size a tree. Size:");
-        Scanner scanner = new Scanner(System.in);
-        int size = scanner.nextInt();
-        if (size == 0) {
-            System.out.println("Input size is 0");
-            return;
+            ToFormTree(size, service);
+
+            service.printTreeDeep();
+            service.PrintBinaryTreeWide();
+            System.out.println(service.root.toString());
+
+            int exit = 1;
+
+            WorkWithTree(service, scanner, exit);
+        } catch (InputMismatchException | TreeAppException e) {
+            System.out.println(e.getMessage());
         }
+    }
 
-        ToFormTree(size, service);
-
-        service.printTreeDeep();
-        service.PrintBinaryTreeWide();
-        System.out.println(service.root.toString());
-
-        int exit = 1;
-
+    private static void WorkWithTree(TreeService service, Scanner scanner, int exit) throws TreeAppException {
         while (exit != 0) {
             PrintOperations();
             int choice = scanner.nextInt();
@@ -36,25 +45,25 @@ public class Main {
                     break;
 
                 case 1:
-                    System.out.println("Введите значение для добавления: ");
+                    System.out.println("Enter the value to add: ");
                     int insertValue = scanner.nextInt();
                     service.insert(insertValue);
                     service.PrintBinaryTreeWide();
                     break;
 
                 case 2:
-                    System.out.println("Введите значение для поиска: ");
+                    System.out.println("Enter the value to search: ");
                     int searchValue = scanner.nextInt();
                     BinaryTreeNode foundValue = service.search(searchValue);
-                    if(foundValue == null){
-                        System.out.println("Значение не найдено");
-                    }else{
+                    if (foundValue == null) {
+                        System.out.println("Value not found");
+                    } else {
                         System.out.println("Value found " + foundValue.getValue());
                     }
                     break;
 
                 case 3:
-                    System.out.println("Введите значение для удаления: ");
+                    System.out.println("Enter the value to delete: ");
                     int deleteValue = scanner.nextInt();
                     service.delete(deleteValue);
                     service.PrintBinaryTreeWide();
@@ -67,19 +76,18 @@ public class Main {
                     break;
 
                 default:
-                    System.out.println("Нет такой операции");
-                    break;
+                    throw new TreeAppException("Operation does not exist");
             }
         }
     }
 
     private static void PrintOperations() {
         System.out.println("Выберите операцию.");
-        System.out.println("0 - Выход");
-        System.out.println("1 - Добавить значение");
-        System.out.println("2 - Поиск значения");
-        System.out.println("3 - Удаление");
-        System.out.println("4 - Вывод всего дерева");
+        System.out.println("0 - Exit");
+        System.out.println("1 - Add value");
+        System.out.println("2 - Search value");
+        System.out.println("3 - Delete value");
+        System.out.println("4 - Displaying the entire tree");
     }
 
     public static BinaryTreeNode ToFormTree(int size, TreeService service) {
